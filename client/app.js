@@ -3,6 +3,11 @@ const height = 800;
 const padding = 130;
 const url ='https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json';
 
+
+// ================================
+// Initialized here for modularity
+// ================================
+
 const svg = d3.select('svg')
   .attr('width', width)
   .attr('height', height);
@@ -16,19 +21,24 @@ const tooltip = d3.select('body')
   .style('opacity', 0)
   .classed('tooltip', true);
 
+
+// ========================================
+// HTTP Request Begins 
+// ========================================
 d3.json(url, (err, { nodes, links }) => {
+
+// This is to convert numbers on links, into the country name
 	links.forEach(d => {
 		d.source = nodes[d.source].country;
 		d.target = nodes[d.target].country;
 	});
 
 
-	const nodeSelection = svg.selectAll('circle')
-	  .data(nodes)
-	  .enter()
-	  .append('circle')
-	    .attr('r', 9)
-	    .attr('fill', 'none');
+
+// ============================================
+// This is to create our nodes and links
+// ============================================
+
 
 	const linkSelection = svg.selectAll('line')
 	  .data(links)
@@ -49,6 +59,12 @@ d3.json(url, (err, { nodes, links }) => {
         .on('drag', drag)
         .on('end', dragEnd));
 
+
+// ============================================
+// Tooltip Configuration
+// ============================================
+
+
   flagSelection
 		.on('mouseover', d => {
 	  	tooltip
@@ -66,6 +82,11 @@ d3.json(url, (err, { nodes, links }) => {
 	  		.style('opacity', 0);
 	  });	
 
+// ==============================================
+// Force simulation data
+// ==============================================
+
+
 	const simulation = d3.forceSimulation(nodes)
 	  .force('center', d3.forceCenter(width / 2 , height / 2 ))
 	  .force("nodes", d3.forceManyBody().strength(-6))
@@ -76,10 +97,6 @@ d3.json(url, (err, { nodes, links }) => {
 
 
 	function ticked() {
-
-	  nodeSelection
-	    .attr("cx", d => d.x )
-	    .attr("cy", d => d.y );
 	  flagSelection
 	    .style("left", d => (d.x - 8)  + 'px')
 	    .style("top", d => (d.y - 6) + 'px');
@@ -90,6 +107,12 @@ d3.json(url, (err, { nodes, links }) => {
 	    .attr("x2", d => d.target.x)
 	    .attr("y2", d => d.target.y);
 	}
+
+
+// ===================================
+// Drag and drop functions
+// ===================================
+
 	function dragStart(d) {
 	  simulation.alpha(0.1).restart();
 	  d.fx = d.x;
