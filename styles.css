@@ -1,12 +1,25 @@
 body {
-	background: lightgrey;
+	background: black;
 }
 svg {
-	margin: 10vh auto;
+	margin: 10vh 30%;
 	display: block;
-	background: whitesmoke;
+	position: absolute;
+	overflow: hidden;
 }
 
+#content {
+	margin: 10vh 30%;
+	display: block;
+	background: whitesmoke;
+	position: absolute;
+	overflow: hidden;
+}
+.flag {
+	position: absolute;
+	margin: auto;
+	z-index: 1;
+}
 .tooltip {
 	opacity: 0;
 	position: absolute;
