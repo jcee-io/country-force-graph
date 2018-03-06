@@ -1,24 +1,27 @@
 body {
 	background: black;
 }
-svg {
-	margin: 10vh 30%;
-	display: block;
+
+svg, #content {
+	margin: 2vh 15%;
+	display: block;	
 	position: absolute;
 	overflow: hidden;
 }
 
+h1 {
+	color: white;
+	text-align: center;
+	font-size: 2.5em;
+}
 #content {
-	margin: 10vh 30%;
-	display: block;
 	background: whitesmoke;
-	position: absolute;
-	overflow: hidden;
 }
 .flag {
 	position: absolute;
 	margin: auto;
 	z-index: 1;
+	transform: scale(1.25);
 }
 .tooltip {
 	opacity: 0;
@@ -30,6 +33,7 @@ svg {
 	padding: 0 10px;
 	text-align: center;
 	border: black solid 3px;
+	z-index: 2;
 }
 
 #tip-content {

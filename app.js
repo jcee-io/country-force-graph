@@ -1,5 +1,5 @@
-const width = 700;
-const height = 700;
+const width = 1250;
+const height = 800;
 const padding = 130;
 const url ='https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json';
 
@@ -10,8 +10,11 @@ const svg = d3.select('svg')
 const flagbox = d3.select('#content')
   .style('width', width + 'px')
   .style('height', height + 'px');
-// const linkSelection = d3.selectAll('line');
-// const simulation;
+
+const tooltip = d3.select('body')
+  .append('div')
+  .style('opacity', 0)
+  .classed('tooltip', true);
 
 d3.json(url, (err, { nodes, links }) => {
 	links.forEach(d => {
@@ -40,18 +43,40 @@ d3.json(url, (err, { nodes, links }) => {
 		.append('img')
 			.attr('src', 'blank.gif')
 		  .attr('class', d => `flag flag-${d.code}`)
-		  .attr('alt', d => d.country);
+		  .attr('alt', d => d.country)
+      .call(d3.drag()
+        .on('start', dragStart)
+        .on('drag', drag)
+        .on('end', dragEnd));
+
+  flagSelection
+		.on('mouseover', d => {
+	  	tooltip
+	  	  .style('left', `${d3.event.x}px`)
+	  	  .style('top', `${d3.event.y}px`)
+	  	  .html(`
+	  	  	<h3>${d.country}</h3>
+	  	  `)
+	  	  .transition(10)
+	  	  .style('opacity', 0.90);
+	  })
+	  .on('mouseout', () => {
+	  	tooltip
+	  		.transition(150)
+	  		.style('opacity', 0);
+	  });	
 
 	const simulation = d3.forceSimulation(nodes)
 	  .force('center', d3.forceCenter(width / 2 , height / 2 ))
-	  .force("nodes", d3.forceManyBody())
+	  .force("nodes", d3.forceManyBody().strength(-6))
 	  .force('links', d3.forceLink(links)
 	  	.id(d => d.country)
-	  	.distance(50))
+	  	.distance(40))
 	  .on('tick', ticked);
 
 
 	function ticked() {
+
 	  nodeSelection
 	    .attr("cx", d => d.x )
 	    .attr("cy", d => d.y );
@@ -65,4 +90,22 @@ d3.json(url, (err, { nodes, links }) => {
 	    .attr("x2", d => d.target.x)
 	    .attr("y2", d => d.target.y);
 	}
+	function dragStart(d) {
+	  simulation.alpha(0.1).restart();
+	  d.fx = d.x;
+	  d.fy = d.y;
+	}
+
+	function drag(d) {
+		simulation.alpha(0.1).restart();
+	  d.fx = d3.event.x;
+	  d.fy = d3.event.y;
+	}
+
+	function dragEnd(d) {
+	  simulation.alphaTarget(0);
+	  d.fx = null;
+	  d.fy = null;
+	}
 });
+
